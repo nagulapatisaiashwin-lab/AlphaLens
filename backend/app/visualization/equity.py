@@ -7,7 +7,10 @@ from __future__ import annotations
 import pandas as pd
 import plotly.graph_objects as go
 
-from app.visualization.base import create_figure
+from app.visualization.base import (
+    create_figure,
+    apply_time_controls,
+)
 from app.visualization.theme import THEME
 
 
@@ -28,6 +31,9 @@ def plot_equity_curve(df: pd.DataFrame) -> go.Figure:
     """
 
     fig = create_figure("Portfolio vs Benchmark")
+
+    # Apply common time controls
+    apply_time_controls(fig)
 
     # Portfolio
     fig.add_trace(
@@ -59,8 +65,8 @@ def plot_equity_curve(df: pd.DataFrame) -> go.Figure:
             )
         )
 
+    # Legend
     fig.update_layout(
-        hovermode="x unified",
         legend=dict(
             orientation="h",
             yanchor="bottom",
@@ -70,18 +76,9 @@ def plot_equity_curve(df: pd.DataFrame) -> go.Figure:
         ),
     )
 
+    # Axis labels
     fig.update_xaxes(
         title="Date",
-        rangeslider_visible=True,
-        rangeselector=dict(
-            buttons=[
-                dict(count=1, label="1M", step="month", stepmode="backward"),
-                dict(count=3, label="3M", step="month", stepmode="backward"),
-                dict(count=6, label="6M", step="month", stepmode="backward"),
-                dict(count=1, label="1Y", step="year", stepmode="backward"),
-                dict(step="all", label="All"),
-            ]
-        ),
     )
 
     fig.update_yaxes(

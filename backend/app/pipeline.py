@@ -55,12 +55,12 @@ def run(csv_path: str | Path) -> AnalysisResult:
     # Generate charts
     print("\nGenerating visualizations...\n")
 
-    generate_all_charts(result.data)
+    figures = generate_all_charts(result.data)
 
     # Generate HTML report
     print("\nGenerating HTML report...\n")
 
-    generate_html_report(result)
+    generate_html_report(result, figures)
 
     print("\nAlphaLens analysis completed successfully.")
 

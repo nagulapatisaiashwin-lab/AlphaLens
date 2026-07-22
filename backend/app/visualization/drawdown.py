@@ -7,7 +7,10 @@ from __future__ import annotations
 import pandas as pd
 import plotly.graph_objects as go
 
-from app.visualization.base import create_figure
+from app.visualization.base import (
+    create_figure,
+    apply_time_controls,
+)
 from app.visualization.theme import THEME
 
 
@@ -32,6 +35,12 @@ def plot_drawdown(df: pd.DataFrame) -> go.Figure:
 
     fig = create_figure("Portfolio Drawdown")
 
+    # Apply common time controls (without range slider)
+    apply_time_controls(
+        fig,
+        show_rangeslider=False,
+    )
+
     fig.add_trace(
         go.Scatter(
             x=df.index,
@@ -46,13 +55,8 @@ def plot_drawdown(df: pd.DataFrame) -> go.Figure:
         )
     )
 
-    fig.update_layout(
-        hovermode="x unified",
-    )
-
     fig.update_xaxes(
         title="Date",
-        rangeslider_visible=True,
     )
 
     fig.update_yaxes(

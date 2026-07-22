@@ -7,36 +7,59 @@ from __future__ import annotations
 
 THEME = {
 
+    # =====================================================
     # Figure
-    "width": 1100,
+    # =====================================================
+
+    "width": 1200,
     "height": 550,
 
+    # =====================================================
     # Typography
+    # =====================================================
+
     "font_family": "Inter, Arial, sans-serif",
     "font_size": 14,
     "title_size": 24,
 
-    # Colors
-    "background": "#FFFFFF",
-    "paper": "#FFFFFF",
+    "text": "#F8FAFC",
+    "muted": "#CBD5E1",
 
-    "portfolio": "#2563EB",      # Blue
-    "benchmark": "#6B7280",      # Gray
-    "drawdown": "#DC2626",       # Red
-    "positive": "#16A34A",       # Green
-    "negative": "#DC2626",
-    "rolling": "#7C3AED",        # Purple
+    # =====================================================
+    # Backgrounds
+    # =====================================================
 
-    # Grid
-    "grid": "#E5E7EB",
+    "background": "rgba(0,0,0,0)",
+    "paper": "rgba(0,0,0,0)",
 
-    # Axis
-    "axis": "#374151",
+    "surface": "#111827",
+    "border": "#334155",
 
-    # Legend
-    "legend_bg": "#FFFFFF",
+    # =====================================================
+    # Strategy Colors
+    # =====================================================
 
+    "portfolio": "#3B82F6",
+    "benchmark": "#94A3B8",
+    "drawdown": "#EF4444",
+    "rolling": "#8B5CF6",
+
+    "positive": "#22C55E",
+    "negative": "#EF4444",
+
+    # =====================================================
+    # Chart Styling
+    # =====================================================
+
+    "grid": "#334155",
+    "axis": "#64748B",
+
+    "legend_bg": "rgba(0,0,0,0)",
+
+    # =====================================================
     # Margins
+    # =====================================================
+
     "margin_left": 60,
     "margin_right": 40,
     "margin_top": 70,
