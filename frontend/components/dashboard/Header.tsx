@@ -15,16 +15,21 @@ import { useAnalysis } from "@/hooks/useAnalysis";
 import { useAnalysisStore } from "@/stores/analysisStore";
 
 
+
 export default function Header() {
+
 
   const portfolioInputRef =
     useRef<HTMLInputElement>(null);
+
 
   const factorInputRef =
     useRef<HTMLInputElement>(null);
 
 
+
   const analysis = useAnalysis();
+
 
 
   const {
@@ -34,6 +39,8 @@ export default function Header() {
     setFactorFile,
     setReport,
   } = useAnalysisStore();
+
+
 
 
 
@@ -53,6 +60,8 @@ export default function Header() {
 
 
 
+
+
   function handlePortfolioChange(
     event: React.ChangeEvent<HTMLInputElement>
   ) {
@@ -61,7 +70,7 @@ export default function Header() {
       event.target.files?.[0];
 
 
-    if (file) {
+    if(file){
 
       setPortfolioFile(file);
 
@@ -71,15 +80,18 @@ export default function Header() {
 
 
 
+
+
   function handleFactorChange(
     event: React.ChangeEvent<HTMLInputElement>
   ) {
+
 
     const file =
       event.target.files?.[0];
 
 
-    if (file) {
+    if(file){
 
       setFactorFile(file);
 
@@ -89,10 +101,12 @@ export default function Header() {
 
 
 
-  function handleAnalyze() {
 
 
-    if (!portfolioFile) {
+  function handleAnalyze(){
+
+
+    if(!portfolioFile){
 
       alert(
         "Please upload a portfolio file first."
@@ -114,17 +128,16 @@ export default function Header() {
 
       {
 
-        onSuccess: (data) => {
+        onSuccess:(data)=>{
 
           setReport(data);
 
         },
 
-        onError: (error) => {
 
-          console.error(
-            error
-          );
+        onError:(error)=>{
+
+          console.error(error);
 
           alert(
             "Analysis failed. Check backend logs."
@@ -140,123 +153,263 @@ export default function Header() {
 
 
 
+
+
   return (
 
-    <header className="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-xl">
+    <header
+      className="
+        border-b
+        border-border/60
+        bg-background/80
+        backdrop-blur-xl
+      "
+    >
 
-      <div className="flex items-center justify-between py-6">
+
+      <div
+        className="
+          flex
+          items-center
+          justify-between
+          px-8
+          py-6
+        "
+      >
+
+
+
 
 
         {/* Branding */}
 
-        <div className="flex items-center gap-4">
 
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-border bg-card shadow-sm">
+        <div
+          className="
+            flex
+            items-center
+            gap-4
+          "
+        >
 
-            <BarChart3 className="h-6 w-6" />
+
+          <div
+            className="
+              flex
+              h-12
+              w-12
+              items-center
+              justify-center
+              rounded-xl
+              border
+              bg-card
+            "
+          >
+
+            <BarChart3
+              className="h-6 w-6"
+            />
 
           </div>
+
+
+
 
 
           <div>
 
-            <h1 className="text-3xl font-bold tracking-tight">
+
+            <h1
+              className="
+                text-3xl
+                font-bold
+                tracking-tight
+              "
+            >
+
               AlphaLens
+
             </h1>
 
 
-            <p className="mt-1 text-sm text-muted-foreground">
+
+            <p
+              className="
+                text-sm
+                text-muted-foreground
+              "
+            >
+
               Professional Quantitative Portfolio Analytics Platform
+
             </p>
+
+
+
+            <p
+              className="
+                mt-1
+                text-xs
+                font-medium
+                text-muted-foreground
+              "
+            >
+
+              Created by Sai Ashwin Nagulapati • IIT Jodhpur
+
+            </p>
+
 
           </div>
 
+
         </div>
+
+
+
 
 
 
 
         {/* Upload Actions */}
 
-        <div className="flex items-center gap-3">
+
+        <div
+          className="
+            flex
+            items-center
+            gap-3
+          "
+        >
+
 
 
           <input
+
             ref={portfolioInputRef}
+
             type="file"
+
             accept=".csv,.xlsx,.xls"
+
             hidden
+
             onChange={handlePortfolioChange}
+
           />
+
 
 
           <input
+
             ref={factorInputRef}
+
             type="file"
+
             accept=".csv,.xlsx,.xls"
+
             hidden
+
             onChange={handleFactorChange}
+
           />
+
+
+
 
 
 
           <Button
+
             variant="outline"
+
             size="lg"
+
             onClick={handlePortfolioClick}
+
           >
 
-            <Upload className="mr-2 h-4 w-4" />
+            <Upload
+              className="mr-2 h-4 w-4"
+            />
+
 
             {
               portfolioFile
-                ? portfolioFile.name
-                : "Upload Portfolio"
+              ? portfolioFile.name
+              : "Upload Portfolio"
             }
+
 
           </Button>
 
 
 
+
+
+
           <Button
+
             variant="outline"
+
             size="lg"
+
             onClick={handleFactorClick}
+
           >
 
-            <Upload className="mr-2 h-4 w-4" />
+            <Upload
+              className="mr-2 h-4 w-4"
+            />
 
             {
               factorFile
-                ? factorFile.name
-                : "Upload Factor (Optional)"
+              ? factorFile.name
+              : "Upload Factor"
             }
 
+
           </Button>
+
+
 
 
 
 
           <Button
+
             size="lg"
+
             onClick={handleAnalyze}
+
             disabled={analysis.isPending}
+
           >
 
-            <FileText className="mr-2 h-4 w-4" />
+
+            <FileText
+              className="mr-2 h-4 w-4"
+            />
+
 
             {
               analysis.isPending
-                ? "Analyzing..."
-                : "Generate Analysis"
+              ? "Analyzing..."
+              : "Generate Analysis"
             }
 
+
           </Button>
+
+
 
 
         </div>
 
+
+
       </div>
+
 
     </header>
 

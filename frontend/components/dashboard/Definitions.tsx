@@ -1,392 +1,307 @@
 "use client";
 
+import { useState } from "react";
+import { ChevronDown } from "lucide-react";
+
 import SectionCard from "./SectionCard";
 
 
-const definitions = [
+const categories = {
 
-  // -------------------------
-  // Performance
-  // -------------------------
+  Performance: [
 
-  {
-    category: "Performance",
+    {
+      title: "Total Return",
+      formula:
+        "((Ending Value - Starting Value) / Starting Value)",
+      explanation:
+        "Measures absolute portfolio growth over the investment period.",
+    },
 
-    title: "Total Return",
+    {
+      title: "CAGR",
+      formula:
+        "(Ending Value / Starting Value)^(1/Years)-1",
+      explanation:
+        "Annualized growth rate of the portfolio.",
+    },
 
-    formula:
-      "Total Return = (Ending Value - Starting Value) / Starting Value",
+    {
+      title: "Sharpe Ratio",
+      formula:
+        "(Rp - Rf) / σp",
+      explanation:
+        "Return generated per unit of total risk.",
+    },
 
-    explanation:
-      "Measures the absolute growth of the portfolio over the entire investment period.",
+  ],
 
-    interpretation:
-      "Higher return indicates stronger portfolio growth, but should always be evaluated with risk metrics.",
-  },
 
 
-  {
-    category: "Performance",
+  Risk: [
 
-    title: "Annualized Return (CAGR)",
+    {
+      title: "Volatility",
+      formula:
+        "Standard Deviation(Returns) × √252",
+      explanation:
+        "Measures portfolio return fluctuation.",
+    },
 
-    formula:
-      "CAGR = (Ending Value / Starting Value)^(1/Years) - 1",
+    {
+      title: "Maximum Drawdown",
+      formula:
+        "Largest peak-to-trough decline",
+      explanation:
+        "Measures worst historical loss.",
+    },
 
-    explanation:
-      "Converts total return into an equivalent yearly growth rate.",
+    {
+      title: "Sortino Ratio",
+      formula:
+        "(Rp-Rf)/Downside Deviation",
+      explanation:
+        "Risk-adjusted return considering only downside volatility.",
+    },
 
-    interpretation:
-      "Useful for comparing strategies with different investment horizons.",
-  },
+  ],
 
 
-  {
-    category: "Performance",
 
-    title: "Sharpe Ratio",
+  Benchmark: [
 
-    formula:
-      "Sharpe = (Rp - Rf) / σp",
+    {
+      title:"Alpha",
 
-    explanation:
-      "Measures excess return generated per unit of total portfolio volatility.",
+      formula:
+        "Portfolio Return - Expected Return",
 
-    interpretation:
-      "Higher Sharpe indicates better risk-adjusted performance.",
-  },
+      explanation:
+        "Measures excess performance beyond benchmark expectation.",
+    },
 
 
+    {
+      title:"Beta",
 
-  // -------------------------
-  // Risk
-  // -------------------------
+      formula:
+        "Cov(Rp,Rm)/Var(Rm)",
 
+      explanation:
+        "Measures sensitivity to market movements.",
+    },
 
-  {
-    category: "Risk",
+  ],
 
-    title: "Volatility",
 
-    formula:
-      "σ = Standard Deviation of Returns × √252",
 
-    explanation:
-      "Measures the variability of portfolio returns.",
+  Distribution:[
 
-    interpretation:
-      "Higher volatility means larger fluctuations and higher uncertainty.",
-  },
+    {
+      title:"Skewness",
 
+      formula:
+        "E[(R-μ)^3]/σ³",
 
-  {
-    category: "Risk",
+      explanation:
+        "Measures return asymmetry.",
+    },
 
-    title: "Maximum Drawdown",
 
-    formula:
-      "MDD = Maximum decline from historical peak",
+    {
+      title:"Kurtosis",
 
-    explanation:
-      "Measures the largest loss experienced from a portfolio peak to a subsequent trough.",
+      formula:
+        "E[(R-μ)^4]/σ⁴",
 
-    interpretation:
-      "Lower drawdown indicates better downside protection.",
-  },
+      explanation:
+        "Measures extreme tail events.",
+    },
 
+  ],
 
-  {
-    category: "Risk",
 
-    title: "Sortino Ratio",
 
-    formula:
-      "Sortino = (Rp - Rf) / Downside Deviation",
+  "Factor Models":[
 
-    explanation:
-      "Similar to Sharpe ratio but considers only negative volatility.",
+    {
+      title:"CAPM",
 
-    interpretation:
-      "Useful for strategies where downside risk matters more than total volatility.",
-  },
+      formula:
+        "Rp-Rf = α + β(Rm-Rf)",
 
+      explanation:
+        "Explains returns using market exposure.",
+    },
 
-  {
-    category: "Risk",
 
-    title: "Value at Risk (VaR)",
+    {
+      title:"Fama-French",
 
-    formula:
-      "VaRα = Loss threshold at confidence level α",
+      formula:
+        "Market + Size + Value + Profitability + Investment",
 
-    explanation:
-      "Estimates the maximum expected loss under normal market conditions.",
+      explanation:
+        "Multi-factor attribution model.",
+    },
 
-    interpretation:
-      "Example: 95% VaR represents a loss level expected not to be exceeded 95% of the time.",
-  },
 
+    {
+      title:"Carhart Model",
 
-  {
-    category: "Risk",
+      formula:
+        "Fama-French + Momentum",
 
-    title: "Conditional VaR (CVaR)",
+      explanation:
+        "Adds momentum as a return factor.",
+    },
 
-    formula:
-      "CVaR = Expected loss beyond VaR threshold",
+  ],
 
-    explanation:
-      "Measures the average loss during the worst-case scenarios beyond VaR.",
 
-    interpretation:
-      "More sensitive to extreme downside events than VaR.",
-  },
+};
 
 
 
-  // -------------------------
-  // Benchmark
-  // -------------------------
+export default function Definitions(){
 
 
-  {
-    category: "Benchmark",
+const [open,setOpen] = useState<string | null>(null);
 
-    title: "Beta",
 
-    formula:
-      "β = Cov(Rp,Rm) / Var(Rm)",
 
-    explanation:
-      "Measures portfolio sensitivity relative to benchmark movements.",
+return (
 
-    interpretation:
-      "Beta > 1 means higher market sensitivity; Beta < 1 means lower sensitivity.",
-  },
+<SectionCard
 
+title="Definitions & Formulae"
 
-  {
-    category: "Benchmark",
+subtitle="Quantitative concepts and mathematical interpretation"
 
-    title: "Alpha",
+>
 
-    formula:
-      "Alpha = Portfolio Return - Expected Market Return",
 
-    explanation:
-      "Measures excess return generated beyond benchmark expectations.",
+<div className="space-y-3">
 
-    interpretation:
-      "Positive alpha indicates value added by the strategy.",
-  },
 
+{
+Object.entries(categories).map(
+([category,items])=>(
 
-  {
-    category: "Benchmark",
 
-    title: "Information Ratio",
+<div
 
-    formula:
-      "IR = Active Return / Tracking Error",
+key={category}
 
-    explanation:
-      "Measures excess benchmark return relative to active risk.",
+className="rounded-xl border border-border/60"
 
-    interpretation:
-      "Higher values indicate more consistent benchmark outperformance.",
-  },
+>
 
 
+<button
 
-  // -------------------------
-  // Distribution
-  // -------------------------
+className="flex w-full items-center justify-between p-4"
 
+onClick={()=>setOpen(
+open===category ? null : category
+)}
 
-  {
-    category: "Distribution",
+>
 
-    title: "Skewness",
 
-    formula:
-      "Skew = E[(R-μ)^3] / σ³",
+<span className="font-semibold">
 
-    explanation:
-      "Measures asymmetry of return distribution.",
+{category}
 
-    interpretation:
-      "Positive skew indicates greater probability of large positive returns.",
-  },
+</span>
 
 
-  {
-    category: "Distribution",
+<ChevronDown
 
-    title: "Kurtosis",
+className={`transition-transform ${
+open===category
+?"rotate-180"
+:""
+}`}
 
-    formula:
-      "Kurtosis = E[(R-μ)^4] / σ⁴",
+/>
 
-    explanation:
-      "Measures tail heaviness of return distribution.",
 
-    interpretation:
-      "Higher kurtosis indicates greater probability of extreme events.",
-  },
+</button>
 
 
 
-  // -------------------------
-  // Factor Models
-  // -------------------------
+{
+open===category && (
 
+<div className="space-y-3 border-t p-4">
 
-  {
-    category: "Factor Models",
 
-    title: "CAPM",
+{
+items.map(item=>(
 
-    formula:
-      "Rp - Rf = α + β(Rm - Rf)",
 
-    explanation:
-      "Models portfolio return using market risk exposure.",
+<div
 
-    interpretation:
-      "Separates market-driven returns from manager skill.",
-  },
+key={item.title}
 
+className="rounded-lg bg-muted/40 p-4"
 
-  {
-    category: "Factor Models",
+>
 
-    title: "Fama-French Three Factor Model",
 
-    formula:
-      "Rp-Rf = α + βMKT(MKT-RF)+βSMB(SMB)+βHML(HML)",
+<h3 className="font-semibold">
 
-    explanation:
-      "Extends CAPM using size and value factors.",
+{item.title}
 
-    interpretation:
-      "Identifies whether returns are explained by market, size, or value exposure.",
-  },
+</h3>
 
 
-  {
-    category: "Factor Models",
+<p className="mt-2 font-mono text-sm">
 
-    title: "Fama-French Five Factor Model",
+{item.formula}
 
-    formula:
-      "MKT + SMB + HML + RMW + CMA",
+</p>
 
-    explanation:
-      "Adds profitability and investment factors.",
 
-    interpretation:
-      "Provides deeper attribution of portfolio performance.",
-  },
+<p className="mt-2 text-sm text-muted-foreground">
 
+{item.explanation}
 
-  {
-    category: "Factor Models",
+</p>
 
-    title: "Carhart Four Factor Model",
 
-    formula:
-      "FF3 + Momentum Factor",
+</div>
 
-    explanation:
-      "Adds momentum as an additional return driver.",
 
-    interpretation:
-      "Useful for analysing momentum-based strategies.",
-  },
+))
 
-];
+}
 
 
+</div>
 
-export default function Definitions() {
+)
 
+}
 
-  return (
 
-    <SectionCard
-      title="Definitions & Formulae"
-      subtitle="Quantitative concepts, mathematical formulas and interpretation"
-    >
+</div>
 
 
-      <div className="space-y-6">
+)
 
+)
 
-        {definitions.map((item) => (
+}
 
-          <div
 
-            key={item.title}
+</div>
 
-            className="rounded-xl border border-border/60 p-5"
 
-          >
+</SectionCard>
 
 
-            <div className="mb-2 text-xs uppercase tracking-wide text-muted-foreground">
-
-              {item.category}
-
-            </div>
-
-
-            <h3 className="text-lg font-semibold">
-
-              {item.title}
-
-            </h3>
-
-
-            <div className="mt-3 rounded-lg bg-muted p-4 font-mono text-sm">
-
-              {item.formula}
-
-            </div>
-
-
-            <p className="mt-3 text-sm text-muted-foreground">
-
-              <strong>
-                Explanation:
-              </strong>{" "}
-
-              {item.explanation}
-
-            </p>
-
-
-            <p className="mt-2 text-sm text-muted-foreground">
-
-              <strong>
-                Interpretation:
-              </strong>{" "}
-
-              {item.interpretation}
-
-            </p>
-
-
-          </div>
-
-
-        ))}
-
-
-      </div>
-
-
-    </SectionCard>
-
-  );
+)
 
 }

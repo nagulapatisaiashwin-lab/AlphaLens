@@ -1,45 +1,388 @@
-import { TrendingDown, TrendingUp } from "lucide-react";
+"use client";
+
 
 interface MetricCardProps {
+
   title: string;
-  value: string;
-  change?: string;
-  positive?: boolean;
+
+  value: unknown;
+
 }
 
+
+
+
+function getNormalizedValue(
+  title: string,
+  rawValue: number
+) {
+
+  const metric = title.toLowerCase();
+
+
+  /*
+    Backend stores returns/risk metrics
+    as decimals.
+
+    Example:
+    0.2068 -> 20.68%
+  */
+
+  if (
+    metric.includes("return") ||
+    metric.includes("cagr") ||
+    metric.includes("drawdown") ||
+    metric.includes("volatility") ||
+    metric.includes("vol") ||
+    metric.includes("std")
+  ) {
+
+    if (Math.abs(rawValue) < 1) {
+
+      return rawValue * 100;
+
+    }
+
+  }
+
+
+  return rawValue;
+
+}
+
+
+
+
+
+function getMetricColor(
+  title: string,
+  rawValue: number
+) {
+
+
+  const metric = title.toLowerCase();
+
+
+  const value = getNormalizedValue(
+    title,
+    rawValue
+  );
+
+
+
+  // Debug
+  console.log(
+    "METRIC COLOR",
+    title,
+    rawValue,
+    value
+  );
+
+
+
+
+
+  /*
+    Volatility
+    <15%       Green
+    15-25%     Yellow
+    >25%       Red
+  */
+
+  if (
+    metric.includes("volatility") ||
+    metric.includes("vol") ||
+    metric.includes("std")
+  ) {
+
+
+    if (value < 15)
+      return "text-green-500";
+
+
+    if (value <= 25)
+      return "text-yellow-500";
+
+
+    return "text-red-500";
+
+  }
+
+
+
+
+
+  /*
+    Drawdown
+    Always red
+  */
+
+  if (
+    metric.includes("drawdown")
+  ) {
+
+    return "text-red-500";
+
+  }
+
+
+
+
+
+  /*
+    Annual Return
+  */
+
+  if (
+    metric.includes("annualized") ||
+    metric.includes("cagr")
+  ) {
+
+
+    if (value > 15)
+      return "text-green-500";
+
+
+    if (value >= 5)
+      return "text-yellow-500";
+
+
+    return "text-red-500";
+
+  }
+
+
+
+
+
+  /*
+    Total Return
+  */
+
+  if (
+    metric.includes("total return")
+  ) {
+
+
+    return value > 0
+      ? "text-green-500"
+      : "text-red-500";
+
+  }
+
+
+
+
+
+  /*
+    Sharpe
+  */
+
+  if (
+    metric.includes("sharpe")
+  ) {
+
+
+    if (value > 1.5)
+      return "text-green-500";
+
+
+    if (value >= 1)
+      return "text-yellow-500";
+
+
+    return "text-red-500";
+
+  }
+
+
+
+
+
+  /*
+    Sortino
+  */
+
+  if (
+    metric.includes("sortino")
+  ) {
+
+
+    if (value > 2)
+      return "text-green-500";
+
+
+    if (value >= 1)
+      return "text-yellow-500";
+
+
+    return "text-red-500";
+
+  }
+
+
+
+
+  return "text-foreground";
+
+}
+
+
+
+
+
+
+
+function extractNumber(
+  value: unknown
+): number {
+
+
+  if (
+    typeof value === "number"
+  ) {
+
+    return value;
+
+  }
+
+
+
+  if (
+    typeof value === "string"
+  ) {
+
+    return Number(
+      value.replace("%", "")
+    );
+
+  }
+
+
+
+  return 0;
+
+}
+
+
+
+
+
+
+
+function formatValue(
+  title: string,
+  value: unknown
+) {
+
+
+  const metric = title.toLowerCase();
+
+
+
+  if (
+    typeof value === "number"
+  ) {
+
+
+    if (
+
+      metric.includes("return") ||
+      metric.includes("cagr") ||
+      metric.includes("drawdown") ||
+      metric.includes("volatility") ||
+      metric.includes("vol") ||
+      metric.includes("std")
+
+    ) {
+
+      return `${(value * 100).toFixed(2)}%`;
+
+    }
+
+
+
+    return value.toFixed(2);
+
+  }
+
+
+
+  return String(value);
+
+}
+
+
+
+
+
+
+
 export default function MetricCard({
+
   title,
+
   value,
-  change,
-  positive,
+
 }: MetricCardProps) {
+
+
+
+  const numericValue =
+    extractNumber(value);
+
+
+
   return (
-    <div className="group rounded-2xl border border-border bg-card p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
-      <p className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
+
+    <div
+      className="
+        rounded-xl
+        border
+        bg-card
+        p-8
+      "
+    >
+
+
+      <p
+        className="
+          text-sm
+          uppercase
+          tracking-wide
+          text-muted-foreground
+        "
+      >
+
         {title}
+
       </p>
 
-      <h3 className="mt-4 text-3xl font-bold tracking-tight">
-        {value}
-      </h3>
 
-      {change && (
-        <div
-          className={`mt-5 inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium ${
-            positive
-              ? "bg-green-500/10 text-green-600 dark:text-green-400"
-              : "bg-red-500/10 text-red-600 dark:text-red-400"
-          }`}
-        >
-          {positive ? (
-            <TrendingUp className="h-4 w-4" />
-          ) : (
-            <TrendingDown className="h-4 w-4" />
+
+
+      <h2
+        className={`
+          mt-6
+          text-4xl
+          font-bold
+          ${getMetricColor(
+            title,
+            numericValue
           )}
+        `}
+      >
 
-          <span>{change}</span>
-        </div>
-      )}
+        {formatValue(
+          title,
+          value
+        )}
+
+      </h2>
+
+
     </div>
+
   );
+
 }

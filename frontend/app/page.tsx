@@ -16,6 +16,7 @@ import { useAnalysisStore } from "@/stores/analysisStore";
 
 export default function Home() {
 
+
   const report = useAnalysisStore(
     (state) => state.report
   );
@@ -24,6 +25,7 @@ export default function Home() {
   return (
 
     <DashboardLayout>
+
 
       <Header />
 
@@ -34,7 +36,20 @@ export default function Home() {
         <PortfolioSnapshot />
 
 
-        <MetricGrid />
+
+        {/* Metrics */}
+
+        {
+          report?.metrics && (
+
+            <MetricGrid
+              metrics={report.metrics}
+            />
+
+          )
+        }
+
+
 
 
 
@@ -56,7 +71,9 @@ export default function Home() {
               <Placeholder text="Upload portfolio data to view equity curve" />
 
             )
+
           }
+
 
         </SectionCard>
 
@@ -73,10 +90,13 @@ export default function Home() {
             report?.charts?.benchmark_comparison ? (
 
               <PlotlyChart
+
                 figure={
                   report.charts.benchmark_comparison
                 }
+
                 height={400}
+
               />
 
             ) : (
@@ -84,15 +104,15 @@ export default function Home() {
               <Placeholder text="Benchmark chart will appear after analysis" />
 
             )
+
           }
+
 
         </SectionCard>
 
 
 
 
-
-        {/* HEATMAP FULL WIDTH */}
 
         <SectionCard
           title="Monthly Returns Heatmap"
@@ -103,8 +123,13 @@ export default function Home() {
             report?.charts?.heatmap ? (
 
               <PlotlyChart
-                figure={report.charts.heatmap}
+
+                figure={
+                  report.charts.heatmap
+                }
+
                 height={350}
+
               />
 
             ) : (
@@ -112,6 +137,7 @@ export default function Home() {
               <Placeholder text="Heatmap unavailable" />
 
             )
+
           }
 
 
@@ -120,8 +146,6 @@ export default function Home() {
 
 
 
-
-        {/* DRAWDOWN FULL WIDTH */}
 
         <SectionCard
           title="Portfolio Drawdown"
@@ -132,8 +156,13 @@ export default function Home() {
             report?.charts?.drawdown ? (
 
               <PlotlyChart
-                figure={report.charts.drawdown}
+
+                figure={
+                  report.charts.drawdown
+                }
+
                 height={350}
+
               />
 
             ) : (
@@ -141,6 +170,7 @@ export default function Home() {
               <Placeholder text="Drawdown unavailable" />
 
             )
+
           }
 
 
@@ -159,8 +189,13 @@ export default function Home() {
             report?.charts?.rolling ? (
 
               <PlotlyChart
-                figure={report.charts.rolling}
+
+                figure={
+                  report.charts.rolling
+                }
+
                 height={450}
+
               />
 
             ) : (
@@ -168,7 +203,9 @@ export default function Home() {
               <Placeholder text="Rolling metrics unavailable" />
 
             )
+
           }
+
 
         </SectionCard>
 
@@ -185,8 +222,13 @@ export default function Home() {
             report?.charts?.distribution ? (
 
               <PlotlyChart
-                figure={report.charts.distribution}
+
+                figure={
+                  report.charts.distribution
+                }
+
                 height={400}
+
               />
 
             ) : (
@@ -194,7 +236,9 @@ export default function Home() {
               <Placeholder text="Distribution unavailable" />
 
             )
+
           }
+
 
         </SectionCard>
 
@@ -211,8 +255,13 @@ export default function Home() {
             report?.charts?.factor_exposure ? (
 
               <PlotlyChart
-                figure={report.charts.factor_exposure}
+
+                figure={
+                  report.charts.factor_exposure
+                }
+
                 height={400}
+
               />
 
             ) : (
@@ -220,7 +269,9 @@ export default function Home() {
               <Placeholder text="Upload factor data for factor analysis" />
 
             )
+
           }
+
 
         </SectionCard>
 
@@ -233,25 +284,37 @@ export default function Home() {
 
             <div className="grid gap-6 lg:grid-cols-2">
 
+
               {
                 Object.entries(report.metrics)
                   .map(([section, data]) => (
 
+
                     typeof data === "object" &&
                     data !== null ? (
 
+
                       <MetricTable
+
                         key={section}
+
                         title={section}
+
                         data={data}
+
                       />
+
 
                     ) : null
 
+
                   ))
+
               }
 
+
             </div>
+
 
           )
         }
@@ -261,6 +324,7 @@ export default function Home() {
 
 
         <Definitions />
+
 
 
       </main>
@@ -274,15 +338,28 @@ export default function Home() {
 
 
 
+
+
 function Placeholder({
   text,
 }: {
   text: string;
 }) {
 
+
   return (
 
-    <div className="flex h-72 items-center justify-center rounded-xl border border-dashed border-border text-muted-foreground">
+    <div className="
+      flex
+      h-72
+      items-center
+      justify-center
+      rounded-xl
+      border
+      border-dashed
+      border-border
+      text-muted-foreground
+    ">
 
       {text}
 
