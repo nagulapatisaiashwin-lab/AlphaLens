@@ -8,77 +8,104 @@ import pandas as pd
 import plotly.graph_objects as go
 
 from app.visualization.base import create_figure
-from app.visualization.theme import THEME
 
-
-MONTH_NAMES = [
-    "Jan", "Feb", "Mar", "Apr",
-    "May", "Jun", "Jul", "Aug",
-    "Sep", "Oct", "Nov", "Dec",
-]
 
 
 def plot_monthly_heatmap(
     returns: pd.Series,
 ) -> go.Figure:
-    """
-    Generate a monthly returns heatmap.
-    """
 
-    monthly_returns = (1 + returns).resample("ME").prod() - 1
 
-    heatmap = pd.DataFrame(
-        {
-            "Year": monthly_returns.index.year,
-            "Month": monthly_returns.index.month,
-            "Return": monthly_returns.values * 100,
-        }
+    monthly = (
+        returns
+        .resample("ME")
+        .apply(lambda x: (1 + x).prod() - 1)
     )
 
-    table = heatmap.pivot(
-        index="Year",
-        columns="Month",
-        values="Return",
-    )
 
-    table = table.reindex(columns=range(1, 13))
-    table.columns = MONTH_NAMES
-
-    fig = create_figure("Monthly Returns Heatmap")
-
-    fig.add_trace(
-        go.Heatmap(
-            z=table.values,
-            x=table.columns,
-            y=table.index.astype(str),
-            text=table.round(2).fillna("").values,
-            texttemplate="%{text}",
-            hovertemplate=(
-                "Year: %{y}<br>"
-                "Month: %{x}<br>"
-                "Return: %{z:.2f}%<extra></extra>"
-            ),
-            colorscale="RdYlGn",
-            colorbar=dict(
-                title="Return %",
-                tickfont=dict(color=THEME["muted"]),
-                title_font=dict(color=THEME["text"]),
-            ),
+    table = (
+        monthly
+        .to_frame("Return")
+        .assign(
+            Year=lambda x: x.index.year,
+            Month=lambda x: x.index.month,
+        )
+        .pivot(
+            index="Year",
+            columns="Month",
+            values="Return",
         )
     )
 
-    fig.update_layout(
-        hovermode="closest",
+
+    fig = create_figure(
+        ""
     )
+
+
+    fig.add_trace(
+
+        go.Heatmap(
+
+            z=table.values * 100,
+
+            x=[
+                str(m)
+                for m in table.columns
+            ],
+
+            y=[
+                str(y)
+                for y in table.index
+            ],
+
+            text=[
+                [
+                    f"{v:.2f}"
+                    for v in row
+                ]
+
+                for row in table.values * 100
+            ],
+
+            texttemplate="%{text}%",
+
+            colorbar=dict(
+                title="Return %",
+            ),
+
+            hovertemplate=
+            "Year: %{y}<br>"
+            "Month: %{x}<br>"
+            "Return: %{z:.2f}%<extra></extra>",
+
+        )
+
+    )
+
+
+    fig.update_layout(
+
+        height=320,
+
+        margin=dict(
+            l=60,
+            r=40,
+            t=20,
+            b=40,
+        ),
+
+    )
+
 
     fig.update_xaxes(
-        title="Month",
-        showgrid=False,
+        title="Month"
     )
 
+
     fig.update_yaxes(
-        title="Year",
-        showgrid=False,
+        title="Year"
     )
+
 
     return fig

@@ -14,10 +14,13 @@ from app.analytics.returns import (
 from app.analytics.drawdown import max_drawdown
 
 
-TRADING_DAYS = 252
+DEFAULT_PERIODS_PER_YEAR = 252
 
 
-def downside_deviation(returns: pd.Series) -> float:
+def downside_deviation(
+    returns: pd.Series,
+    periods_per_year: int = DEFAULT_PERIODS_PER_YEAR,
+) -> float:
     """
     Annualized downside deviation.
     """
@@ -29,12 +32,13 @@ def downside_deviation(returns: pd.Series) -> float:
     if len(downside) == 0:
         return 0.0
 
-    return float(downside.std() * (TRADING_DAYS ** 0.5))
+    return float(downside.std() * (periods_per_year ** 0.5))
 
 
 def sortino_ratio(
     returns: pd.Series,
     risk_free_rate: float = 0.0,
+    periods_per_year: int = DEFAULT_PERIODS_PER_YEAR,
 ) -> float:
     """
     Annualized Sortino Ratio.
@@ -42,22 +46,34 @@ def sortino_ratio(
 
     returns = validate_returns(returns)
 
-    downside = downside_deviation(returns)
+    downside = downside_deviation(
+        returns,
+        periods_per_year=periods_per_year,
+    )
 
     if downside == 0:
         return 0.0
 
-    excess_return = annualized_return(returns) - risk_free_rate
+    excess_return = annualized_return(
+        returns,
+        periods_per_year=periods_per_year,
+    ) - risk_free_rate
 
     return float(excess_return / downside)
 
 
-def calmar_ratio(returns: pd.Series) -> float:
+def calmar_ratio(
+    returns: pd.Series,
+    periods_per_year: int = DEFAULT_PERIODS_PER_YEAR,
+) -> float:
     """
     Calmar Ratio.
     """
 
-    cagr = annualized_return(returns)
+    cagr = annualized_return(
+        returns,
+        periods_per_year=periods_per_year,
+    )
 
     mdd = abs(max_drawdown(returns))
 

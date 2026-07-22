@@ -6,62 +6,140 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pandas as pd
+
 from app.core.result import AnalysisResult
 
-from app.io.loader import load_csv
-from app.io.detector import detect_dataset_type
-from app.io.normalizer import extract_returns
+from app.io import (
+    load_file,
+    validate_dataframe,
+    detect_schema,
+    normalize_dataframe,
+    detect_frequency,
+)
 
-from app.report import analyze_strategy, print_report
+from app.preprocessing import (
+    extract_returns,
+    extract_benchmark_returns,
+)
+
+from app.report import (
+    analyze_strategy,
+    print_report,
+)
 
 from app.reporting.html import generate_html_report
 
 from app.visualization.registry import generate_all_charts
 
 
-def run(csv_path: str | Path) -> AnalysisResult:
+def run(
+    file_path: str | Path,
+    factor_data: pd.DataFrame | None = None,
+    generate_charts: bool = True,
+    generate_html: bool = True,
+    verbose: bool = True,
+) -> AnalysisResult:
     """
     Execute the complete AlphaLens pipeline.
     """
 
-    csv_path = Path(csv_path)
+    file_path = Path(file_path)
 
-    # Load data
-    df = load_csv(csv_path)
+    # -------------------------
+    # Ingestion
+    # -------------------------
 
-    # Detect dataset type
-    dataset_type = detect_dataset_type(df)
+    df = load_file(file_path)
 
-    # Extract returns
-    returns = extract_returns(df)
+    validate_dataframe(df)
 
-    # Compute analytics
-    metrics = analyze_strategy(returns)
+    schema = detect_schema(df)
 
-    # Create analysis result
+    df = normalize_dataframe(df, schema)
+
+    frequency = detect_frequency(df)
+
+    # -------------------------
+    # Preprocessing
+    # -------------------------
+
+    portfolio_returns = extract_returns(df)
+
+    benchmark_returns = extract_benchmark_returns(df)
+
+    # -------------------------
+    # Analytics
+    # -------------------------
+
+    metrics = analyze_strategy(
+        portfolio_returns,
+        benchmark_returns=benchmark_returns,
+        factor_data=factor_data,
+        periods_per_year=frequency.annualization_factor,
+    )
+
+    # -------------------------
+    # Result
+    # -------------------------
+
     result = AnalysisResult(
-        dataset_type=dataset_type,
+        dataset_type="Portfolio Dataset",
+        frequency=frequency,
         data=df,
-        returns=returns,
+        returns=portfolio_returns,
         metrics=metrics,
     )
 
-    # Console report
-    print(f"\nDetected Dataset Type : {result.dataset_type}")
-    print(f"Observations          : {len(result.returns)}\n")
+    # -------------------------
+    # Console Report
+    # -------------------------
 
-    print_report(result.metrics)
+    if verbose:
 
-    # Generate charts
-    print("\nGenerating visualizations...\n")
+        print("\nDetected Schema")
+        print(f"Date Column      : {schema.date}")
+        print(f"Portfolio Column : {schema.portfolio}")
 
-    figures = generate_all_charts(result.data)
+        if schema.benchmark is not None:
+            print(f"Benchmark Column : {schema.benchmark}")
 
-    # Generate HTML report
-    print("\nGenerating HTML report...\n")
+        print(f"Detected Frequency : {frequency.name}")
+        print(f"Observations       : {len(result.returns)}\n")
 
-    generate_html_report(result, figures)
+        print_report(result.metrics)
 
-    print("\nAlphaLens analysis completed successfully.")
+    # -------------------------
+    # Visualization
+    # -------------------------
+
+    if generate_charts:
+
+        if verbose:
+            print("\nGenerating visualizations...\n")
+
+        figures = generate_all_charts(
+            result.data,
+            factor_results=result.metrics.get("Factor Analysis"),
+        )
+
+        result.charts = figures
+
+    # -------------------------
+    # HTML Report
+    # -------------------------
+
+    if generate_html:
+
+        if verbose:
+            print("\nGenerating HTML report...\n")
+
+        generate_html_report(
+            result,
+            result.charts,
+        )
+
+    if verbose:
+        print("\nAlphaLens analysis completed successfully.")
 
     return result

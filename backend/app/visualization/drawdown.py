@@ -11,57 +11,90 @@ from app.visualization.base import (
     create_figure,
     apply_time_controls,
 )
-from app.visualization.theme import THEME
 
 
-def plot_drawdown(df: pd.DataFrame) -> go.Figure:
-    """
-    Plot portfolio drawdown.
+def plot_drawdown(
+    df: pd.DataFrame,
+) -> go.Figure:
 
-    Parameters
-    ----------
-    df : pd.DataFrame
 
-    Returns
-    -------
-    go.Figure
-    """
+    portfolio = df["Portfolio Value"]
 
-    equity = df["Portfolio Value"]
 
-    running_peak = equity.cummax()
+    peak = portfolio.cummax()
 
-    drawdown = (equity / running_peak - 1.0) * 100
 
-    fig = create_figure("Portfolio Drawdown")
+    drawdown = (
+        portfolio / peak - 1
+    ) * 100
 
-    # Apply common time controls (without range slider)
-    apply_time_controls(
-        fig,
-        show_rangeslider=False,
+
+
+    fig = create_figure(
+        ""
     )
+
+
+    apply_time_controls(fig)
+
+
 
     fig.add_trace(
+
         go.Scatter(
-            x=df.index,
+
+            x=drawdown.index,
+
             y=drawdown,
+
             mode="lines",
+
             name="Drawdown",
-            line=dict(
-                color=THEME["drawdown"],
-                width=2,
-            ),
+
             fill="tozeroy",
+
         )
+
     )
+
+
+
+    fig.update_layout(
+
+        height=320,
+
+
+        margin=dict(
+
+            l=60,
+
+            r=30,
+
+            t=20,
+
+            b=45,
+
+        ),
+
+
+    )
+
+
 
     fig.update_xaxes(
-        title="Date",
+        title="Date"
     )
 
+
     fig.update_yaxes(
+
         title="Drawdown (%)",
+
         ticksuffix="%",
+
+        rangemode="tozero",
+
     )
+
 
     return fig

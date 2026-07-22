@@ -1,29 +1,61 @@
 """
-AlphaLens Dataset Normalizer
+AlphaLens Data Normalizer
+
+Converts a detected dataset into AlphaLens' canonical schema.
 """
 
 from __future__ import annotations
 
 import pandas as pd
 
-from app.io.detector import detect_dataset_type
+from .detector import SchemaMapping
 
 
-def extract_returns(df: pd.DataFrame) -> pd.Series:
+CANONICAL_DATE = "Date"
+CANONICAL_PORTFOLIO = "Portfolio Value"
+CANONICAL_BENCHMARK = "Benchmark Value"
+
+
+def normalize_dataframe(
+    df: pd.DataFrame,
+    schema: SchemaMapping,
+) -> pd.DataFrame:
     """
-    Convert supported datasets into a standardized
-    return series.
+    Normalize a validated dataset into AlphaLens' canonical schema.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Original validated DataFrame.
+
+    schema : SchemaMapping
+        Mapping detected by detector.py.
+
+    Returns
+    -------
+    pd.DataFrame
+        Normalized DataFrame.
     """
 
-    dataset_type = detect_dataset_type(df)
+    normalized = df.copy()
 
-    if dataset_type == "returns":
-        return df["Returns"]
+    rename_map = {
+        schema.date: CANONICAL_DATE,
+        schema.portfolio: CANONICAL_PORTFOLIO,
+    }
 
-    if dataset_type == "portfolio":
-        return df["Portfolio Value"].pct_change().dropna()
+    if schema.benchmark is not None:
+        rename_map[schema.benchmark] = CANONICAL_BENCHMARK
 
-    if dataset_type == "prices":
-        return df["Close"].pct_change().dropna()
+    normalized = normalized.rename(columns=rename_map)
 
-    raise ValueError("Unsupported dataset.")
+    normalized[CANONICAL_DATE] = pd.to_datetime(
+        normalized[CANONICAL_DATE],
+        errors="raise",
+    )
+
+    normalized = normalized.sort_values(CANONICAL_DATE)
+
+    normalized = normalized.set_index(CANONICAL_DATE)
+
+    return normalized

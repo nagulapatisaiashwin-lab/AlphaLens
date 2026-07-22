@@ -47,6 +47,7 @@ def generate_html_report(
     risk = result.metrics["Risk"]
     statistics = result.metrics["Statistics"]
     distribution = result.metrics["Distribution"]
+    benchmark = result.metrics.get("Benchmark Analysis")
 
     body = ""
 
@@ -80,7 +81,6 @@ def generate_html_report(
         ),
     ]
 
-    # Add CAGR if available
     if "CAGR" in performance:
         kpis.append(
             (
@@ -117,8 +117,13 @@ def generate_html_report(
     # Dataset Information
     # ======================================================
 
+    dataset_type = result.dataset_type
+
+    if benchmark is not None:
+        dataset_type += " (with Benchmark)"
+
     body += build_dataset_card(
-        result.dataset_type,
+        dataset_type,
         len(result.returns),
     )
 
@@ -136,7 +141,19 @@ def generate_html_report(
         )
 
     # ======================================================
-    # Drawdown 
+    # Benchmark Comparison
+    # ======================================================
+
+    if "benchmark_comparison" in figures:
+        body += build_chart_card(
+            "Benchmark Comparison",
+            _embed_plotly_chart(
+                figures["benchmark_comparison"],
+            ),
+        )
+
+    # ======================================================
+    # Drawdown
     # ======================================================
 
     chart_cards = []
@@ -150,8 +167,6 @@ def generate_html_report(
                 ),
             )
         )
-
-    
 
     if chart_cards:
         body += build_metric_grid(chart_cards)
@@ -167,47 +182,67 @@ def generate_html_report(
                 figures["heatmap"],
             ),
         )
-        
+
     # ======================================================
-# Rolling Metrics
-# ======================================================
+    # Rolling Metrics
+    # ======================================================
 
     if "rolling" in figures:
         body += build_chart_card(
             "Rolling Metrics",
             _embed_plotly_chart(
-            figures["rolling"],
-        ),
-    )   
-    
+                figures["rolling"],
+            ),
+        )
+
     # ======================================================
-# Return Distribution
-# ======================================================
+    # Return Distribution
+    # ======================================================
 
     if "distribution" in figures:
         body += build_chart_card(
             "Return Distribution",
             _embed_plotly_chart(
-            figures["distribution"],
-        ),
-    )     
+                figures["distribution"],
+            ),
+        )
+
+    # ======================================================
+    # Factor Exposure
+    # ======================================================
+
+    if "factor_exposure" in figures:
+        body += build_chart_card(
+            "Factor Exposure",
+            _embed_plotly_chart(
+                figures["factor_exposure"],
+            ),
+        )
 
     # ======================================================
     # Metric Tables
     # ======================================================
 
-    body += build_metric_grid(
-        [
+    metric_cards = [
+        build_metric_card(
+            "Performance Metrics",
+            performance,
+        ),
+        build_metric_card(
+            "Risk Metrics",
+            risk,
+        ),
+    ]
+
+    if benchmark is not None:
+        metric_cards.append(
             build_metric_card(
-                "Performance Metrics",
-                performance,
-            ),
-            build_metric_card(
-                "Risk Metrics",
-                risk,
-            ),
-        ]
-    )
+                "Benchmark Metrics",
+                benchmark,
+            )
+        )
+
+    body += build_metric_grid(metric_cards)
 
     body += build_metric_grid(
         [
@@ -221,6 +256,26 @@ def generate_html_report(
             ),
         ]
     )
+
+    # ======================================================
+    # Factor Analysis
+    # ======================================================
+
+    factor_analysis = result.metrics.get("Factor Analysis")
+
+    if factor_analysis is not None:
+
+        factor_cards = []
+
+        for model_name, metrics in factor_analysis.items():
+            factor_cards.append(
+                build_metric_card(
+                    model_name,
+                    metrics,
+                )
+            )
+
+        body += build_metric_grid(factor_cards)
 
     # ======================================================
     # Footer

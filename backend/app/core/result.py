@@ -9,6 +9,8 @@ from pathlib import Path
 
 import pandas as pd
 
+from app.io.frequency import FrequencyInfo
+
 
 @dataclass
 class AnalysisResult:
@@ -17,6 +19,8 @@ class AnalysisResult:
     """
 
     dataset_type: str
+
+    frequency: FrequencyInfo
 
     data: pd.DataFrame
 

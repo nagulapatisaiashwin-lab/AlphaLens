@@ -11,18 +11,28 @@ from app.visualization.base import (
     create_figure,
     apply_time_controls,
 )
+
 from app.visualization.theme import THEME
 
 
-def plot_equity_curve(df: pd.DataFrame) -> go.Figure:
+
+def plot_equity_curve(
+    df: pd.DataFrame,
+) -> go.Figure:
     """
-    Create an interactive equity curve chart.
+    Create portfolio equity curve chart.
+
+    Equity curve should represent only the
+    portfolio value through time.
+
+    Benchmark comparison is handled separately
+    by benchmark_comparison.py.
 
     Parameters
     ----------
     df : pd.DataFrame
-        DataFrame indexed by Date containing Portfolio Value and
-        optionally Benchmark Value.
+        DataFrame indexed by Date containing
+        Portfolio Value column.
 
     Returns
     -------
@@ -30,60 +40,96 @@ def plot_equity_curve(df: pd.DataFrame) -> go.Figure:
         Plotly figure object.
     """
 
-    fig = create_figure("Portfolio vs Benchmark")
 
-    # Apply common time controls
+    fig = create_figure(
+        "Portfolio Equity Curve"
+    )
+
+
     apply_time_controls(fig)
 
-    # Portfolio
+
+
+    # -----------------------------
+    # Portfolio Equity
+    # -----------------------------
+
     fig.add_trace(
+
         go.Scatter(
+
             x=df.index,
+
             y=df["Portfolio Value"],
+
             mode="lines",
+
             name="Portfolio",
+
             line=dict(
+
                 color=THEME["portfolio"],
+
                 width=2.5,
+
             ),
+
         )
+
     )
 
-    # Benchmark (optional)
-    if "Benchmark Value" in df.columns:
-        fig.add_trace(
-            go.Scatter(
-                x=df.index,
-                y=df["Benchmark Value"],
-                mode="lines",
-                name="Benchmark",
-                line=dict(
-                    color=THEME["benchmark"],
-                    width=2,
-                    dash="dot",
-                ),
-            )
-        )
 
-    # Legend
+
+    # -----------------------------
+    # Layout
+    # -----------------------------
+
     fig.update_layout(
+
         legend=dict(
+
             orientation="h",
+
             yanchor="bottom",
+
             y=1.02,
+
             xanchor="right",
+
             x=1,
+
         ),
+
+        margin=dict(
+
+            l=60,
+
+            r=30,
+
+            t=45,
+
+            b=50,
+
+        ),
+
     )
 
-    # Axis labels
+
+
     fig.update_xaxes(
+
         title="Date",
+
     )
+
 
     fig.update_yaxes(
+
         title="Portfolio Value",
+
         tickformat=",.0f",
+
     )
+
 
     return fig
