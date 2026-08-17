@@ -8,33 +8,70 @@ import SectionCard from "./SectionCard";
 
 const categories = {
 
+
   Performance: [
 
     {
       title: "Total Return",
+
       formula:
-        "((Ending Value - Starting Value) / Starting Value)",
+        "((Ending Value / Starting Value) - 1) × 100",
+
       explanation:
-        "Measures absolute portfolio growth over the investment period.",
+        "Measures the absolute growth of the portfolio during the investment period.",
+
+      insight:
+        "Positive values indicate portfolio growth.",
+
     },
 
+
     {
-      title: "CAGR",
+      title: "Annualized Return (CAGR)",
+
       formula:
-        "(Ending Value / Starting Value)^(1/Years)-1",
+        "(Ending Value / Starting Value)^(252/N) - 1",
+
       explanation:
-        "Annualized growth rate of the portfolio.",
+        "Represents the compounded yearly return assuming 252 trading days.",
+
+      insight:
+        ">15% Strong | 5-15% Moderate | <5% Weak",
+
     },
+
 
     {
       title: "Sharpe Ratio",
+
       formula:
         "(Rp - Rf) / σp",
+
       explanation:
-        "Return generated per unit of total risk.",
+        "Measures excess return generated per unit of total risk.",
+
+      insight:
+        ">2 Excellent | >1.5 Good | >1 Acceptable | <1 Weak",
+
+    },
+
+
+    {
+      title: "Sortino Ratio",
+
+      formula:
+        "(Rp - Rf) / Downside Deviation",
+
+      explanation:
+        "Risk-adjusted return measure that penalizes only negative volatility.",
+
+      insight:
+        ">2 Strong downside-adjusted performance",
+
     },
 
   ],
+
 
 
 
@@ -42,69 +79,91 @@ const categories = {
 
     {
       title: "Volatility",
+
       formula:
-        "Standard Deviation(Returns) × √252",
+        "σ(Returns) × √252",
+
       explanation:
-        "Measures portfolio return fluctuation.",
+        "Annualized standard deviation of portfolio returns.",
+
+      insight:
+        "<15% Low | 15-25% Moderate | >25% High",
+
     },
+
 
     {
       title: "Maximum Drawdown",
+
       formula:
-        "Largest peak-to-trough decline",
+        "Min((Portfolio Value - Peak Value) / Peak Value)",
+
       explanation:
-        "Measures worst historical loss.",
+        "Largest decline from a historical peak before recovery.",
+
+      insight:
+        "Lower drawdown indicates better capital preservation.",
+
     },
 
-    {
-      title: "Sortino Ratio",
-      formula:
-        "(Rp-Rf)/Downside Deviation",
-      explanation:
-        "Risk-adjusted return considering only downside volatility.",
-    },
 
   ],
+
 
 
 
   Benchmark: [
 
     {
-      title:"Alpha",
+      title: "Alpha",
 
       formula:
-        "Portfolio Return - Expected Return",
+        "Rp - [Rf + β(Rm-Rf)]",
 
       explanation:
-        "Measures excess performance beyond benchmark expectation.",
+        "Measures excess return generated beyond expected market return.",
+
+      insight:
+        "Positive alpha indicates benchmark outperformance.",
+
     },
 
 
     {
-      title:"Beta",
+      title: "Beta",
 
       formula:
-        "Cov(Rp,Rm)/Var(Rm)",
+        "Cov(Rp,Rm) / Var(Rm)",
 
       explanation:
-        "Measures sensitivity to market movements.",
+        "Measures portfolio sensitivity to market movements.",
+
+      insight:
+        "Beta >1 means higher market sensitivity.",
+
     },
 
   ],
 
 
 
+
+
   Distribution:[
+
 
     {
       title:"Skewness",
 
       formula:
-        "E[(R-μ)^3]/σ³",
+        "E[(R-μ)³] / σ³",
 
       explanation:
-        "Measures return asymmetry.",
+        "Measures asymmetry of return distribution.",
+
+      insight:
+        "Positive skew indicates larger upside opportunities.",
+
     },
 
 
@@ -112,61 +171,88 @@ const categories = {
       title:"Kurtosis",
 
       formula:
-        "E[(R-μ)^4]/σ⁴",
+        "E[(R-μ)⁴] / σ⁴",
 
       explanation:
-        "Measures extreme tail events.",
+        "Measures probability of extreme return events.",
+
+      insight:
+        "Higher kurtosis indicates heavier tails.",
+
     },
+
 
   ],
 
 
 
+
+
   "Factor Models":[
+
 
     {
       title:"CAPM",
 
       formula:
-        "Rp-Rf = α + β(Rm-Rf)",
+        "Rp - Rf = α + β(Rm - Rf)",
 
       explanation:
-        "Explains returns using market exposure.",
+        "Explains portfolio returns using market exposure.",
+
+      insight:
+        "Separates market-driven returns from alpha.",
+
     },
+
 
 
     {
       title:"Fama-French",
 
       formula:
-        "Market + Size + Value + Profitability + Investment",
+        "Rp-Rf = α + βMKT + βSMB + βHML",
 
       explanation:
-        "Multi-factor attribution model.",
+        "Multi-factor model explaining size and value effects.",
+
+      insight:
+        "Used for professional factor attribution.",
+
     },
+
 
 
     {
-      title:"Carhart Model",
+      title:"Carhart Four Factor",
 
       formula:
-        "Fama-French + Momentum",
+        "Fama-French + Momentum Factor",
 
       explanation:
-        "Adds momentum as a return factor.",
+        "Adds momentum exposure to factor analysis.",
+
+      insight:
+        "Commonly used in quantitative equity research.",
+
     },
 
+
   ],
+
 
 
 };
 
 
 
+
+
 export default function Definitions(){
 
 
-const [open,setOpen] = useState<string | null>(null);
+const [open,setOpen] =
+useState<string | null>(null);
 
 
 
@@ -176,7 +262,7 @@ return (
 
 title="Definitions & Formulae"
 
-subtitle="Quantitative concepts and mathematical interpretation"
+subtitle="Quantitative methodology, formulas and metric interpretation"
 
 >
 
@@ -186,6 +272,7 @@ subtitle="Quantitative concepts and mathematical interpretation"
 
 {
 Object.entries(categories).map(
+
 ([category,items])=>(
 
 
@@ -193,17 +280,29 @@ Object.entries(categories).map(
 
 key={category}
 
-className="rounded-xl border border-border/60"
+className="
+rounded-xl
+border
+border-border/60
+"
 
 >
 
 
 <button
 
-className="flex w-full items-center justify-between p-4"
+className="
+flex
+w-full
+items-center
+justify-between
+p-4
+"
 
 onClick={()=>setOpen(
-open===category ? null : category
+open===category
+?null
+:category
 )}
 
 >
@@ -216,10 +315,12 @@ open===category ? null : category
 </span>
 
 
+
 <ChevronDown
 
-className={`transition-transform ${
-open===category
+className={`
+transition-transform
+${open===category
 ?"rotate-180"
 :""
 }`}
@@ -231,10 +332,19 @@ open===category
 
 
 
+
 {
 open===category && (
 
-<div className="space-y-3 border-t p-4">
+<div
+
+className="
+space-y-3
+border-t
+p-4
+"
+
+>
 
 
 {
@@ -245,7 +355,11 @@ items.map(item=>(
 
 key={item.title}
 
-className="rounded-lg bg-muted/40 p-4"
+className="
+rounded-lg
+bg-muted/40
+p-4
+"
 
 >
 
@@ -257,18 +371,66 @@ className="rounded-lg bg-muted/40 p-4"
 </h3>
 
 
-<p className="mt-2 font-mono text-sm">
+
+<div
+
+className="
+mt-3
+rounded-md
+bg-background
+p-3
+font-mono
+text-sm
+"
+
+>
 
 {item.formula}
 
-</p>
+</div>
 
 
-<p className="mt-2 text-sm text-muted-foreground">
+
+
+<p
+
+className="
+mt-3
+text-sm
+text-muted-foreground
+"
+
+>
 
 {item.explanation}
 
 </p>
+
+
+
+
+<div
+
+className="
+mt-3
+rounded-md
+border
+p-3
+text-sm
+"
+
+>
+
+<b>
+Interpretation:
+</b>
+
+{" "}
+
+{item.insight}
+
+</div>
+
 
 
 </div>
@@ -286,6 +448,7 @@ className="rounded-lg bg-muted/40 p-4"
 }
 
 
+
 </div>
 
 
@@ -300,7 +463,6 @@ className="rounded-lg bg-muted/40 p-4"
 
 
 </SectionCard>
-
 
 )
 

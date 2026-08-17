@@ -30,7 +30,7 @@ export default function Home() {
       <Header />
 
 
-      <main className="mx-auto max-w-7xl space-y-8 p-6">
+      <main className="mx-auto max-w-7xl space-y-6 p-6">
 
 
         <PortfolioSnapshot />
@@ -63,7 +63,7 @@ export default function Home() {
 
               <PlotlyChart
                 figure={report.charts.equity}
-                height={450}
+                height={400}
               />
 
             ) : (
@@ -95,7 +95,7 @@ export default function Home() {
                   report.charts.benchmark_comparison
                 }
 
-                height={400}
+                height={350}
 
               />
 
@@ -128,7 +128,7 @@ export default function Home() {
                   report.charts.heatmap
                 }
 
-                height={350}
+                height={300}
 
               />
 
@@ -161,7 +161,7 @@ export default function Home() {
                   report.charts.drawdown
                 }
 
-                height={350}
+                height={300}
 
               />
 
@@ -194,7 +194,7 @@ export default function Home() {
                   report.charts.rolling
                 }
 
-                height={450}
+                height={350}
 
               />
 
@@ -227,7 +227,7 @@ export default function Home() {
                   report.charts.distribution
                 }
 
-                height={400}
+                height={350}
 
               />
 
@@ -260,7 +260,7 @@ export default function Home() {
                   report.charts.factor_exposure
                 }
 
-                height={400}
+                height={350}
 
               />
 

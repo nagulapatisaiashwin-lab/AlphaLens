@@ -15,9 +15,9 @@ export default function SectionCard({
 }: SectionCardProps) {
   return (
     <section className="rounded-2xl border border-border bg-card shadow-sm">
-      <div className="flex items-start justify-between border-b border-border px-6 py-5">
+      <div className="flex items-start justify-between border-b border-border px-5 py-4">
         <div>
-          <h2 className="text-xl font-semibold tracking-tight">
+          <h2 className="text-lg font-semibold tracking-tight">
             {title}
           </h2>
 
@@ -35,7 +35,7 @@ export default function SectionCard({
         )}
       </div>
 
-      <div className="p-6">
+      <div className="p-5">
         {children}
       </div>
     </section>

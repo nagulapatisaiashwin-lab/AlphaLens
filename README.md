@@ -2,7 +2,9 @@
 
 ## Professional Quantitative Portfolio Analytics Platform
 
-
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](https://www.python.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-14%2B-black.svg)](https://nextjs.org/)
 
 AlphaLens is a quantitative portfolio analytics platform that converts portfolio data into an institutional-style research dashboard.
 
@@ -45,25 +47,66 @@ Interactive Research Dashboard
 
 AlphaLens accepts:
 
-- CSV files
-- Excel files (.xlsx, .xls)
+- **CSV files** (.csv)
+- **Excel files** (.xlsx, .xls)
 
-Automatically detects:
+### Accepted File Formats and Column Headings
 
-- Date column
+The system automatically detects the following column headings (case-insensitive):
+
+#### Date Column (Required)
+- `date`
+- `trade date`
+- `datetime`
+- `timestamp`
+- `time`
+
+#### Portfolio Column (Required)
+- `portfolio`
+- `portfolio value`
+- `portfolio nav`
+- `nav`
+- `equity`
+- `equity curve`
+- `strategy value`
+- `strategy equity`
+- `account value`
+- `total value`
+
+#### Benchmark Column (Optional)
+- `benchmark`
+- `benchmark value`
+- `index`
+- `market`
+- `spy`
+- `nifty50`
+- `nifty 50`
+
+### Example Input Formats
+
+**CSV Example:**
+```csv
+Date,Portfolio Value,Benchmark Value
+2020-01-01,1.00,1.00
+2020-01-02,1.01,1.005
+2020-01-03,1.02,1.01
+```
+
+**Excel Example:**
+| Date | Portfolio Value | Benchmark Value |
+|------|-----------------|-----------------|
+| 2020-01-01 | 1.00 | 1.00 |
+| 2020-01-02 | 1.01 | 1.005 |
+| 2020-01-03 | 1.02 | 1.01 |
+
+### Data Detection Features
+
+The system automatically detects:
+- Date column format and encoding
 - Portfolio value/NAV column
-- Benchmark column
+- Benchmark column (if present)
 - Dataset structure
-- Sampling frequency
-
-Example input:
-
-```
-Date | Portfolio Value | Benchmark Value
-----------------------------------------
-2020-01-01 | 1.00 | 1.00
-2020-01-02 | 1.01 | 1.005
-```
+- Sampling frequency (daily, weekly, monthly, etc.)
 
 No manual code modification required.
 
@@ -275,6 +318,12 @@ AlphaLens/
 
 # Running AlphaLens
 
+## Prerequisites
+
+- Python 3.8 or higher
+- Node.js 18 or higher
+- npm or yarn package manager
+
 ## Backend Setup
 
 ```bash
@@ -282,7 +331,7 @@ cd backend
 
 pip install -r requirements.txt
 
-uvicorn main:app --reload
+python -m uvicorn main:app --reload
 ```
 
 Backend runs on:
@@ -290,6 +339,8 @@ Backend runs on:
 ```
 http://localhost:8000
 ```
+
+API Documentation available at: `http://localhost:8000/docs`
 
 ---
 
@@ -313,19 +364,31 @@ http://localhost:3000
 
 # Example Workflow
 
-1. Upload portfolio CSV/XLSX
-
+1. Upload portfolio CSV/XLSX file
 2. Upload optional factor dataset
-
 3. Generate analysis
-
 4. Explore:
+   - Performance metrics
+   - Risk statistics
+   - Benchmark comparison
+   - Factor exposure
+   - Interactive charts
 
-- Performance metrics
-- Risk statistics
-- Benchmark comparison
-- Factor exposure
-- Interactive charts
+## Quick Start
+
+1. **Prepare your data**: Ensure your portfolio file contains at minimum a Date column and a Portfolio Value column
+2. **Start the backend**: `cd backend && uvicorn main:app --reload`
+3. **Start the frontend**: `cd frontend && npm run dev`
+4. **Open your browser**: Navigate to `http://localhost:3000`
+5. **Upload and analyze**: Use the upload buttons to load your portfolio data and generate insights
+
+## Data Format Requirements
+
+- **File size**: Recommended maximum 10MB for optimal performance
+- **Date format**: YYYY-MM-DD (ISO 8601) preferred, but flexible parsing supported
+- **Frequency**: Daily, weekly, or monthly data
+- **Missing values**: System handles missing benchmark data gracefully
+- **Encoding**: UTF-8, UTF-8-sig, CP1252, and Latin1 encodings supported
 
 ---
 
@@ -349,6 +412,46 @@ http://localhost:3000
 - Cloud deployment
 - User accounts
 - Persistent reports
+
+---
+
+# Troubleshooting
+
+## Common Issues
+
+**Backend won't start:**
+- Ensure Python 3.8+ is installed
+- Check that all dependencies are installed: `pip install -r requirements.txt`
+- Verify port 8000 is not in use
+
+**Frontend won't start:**
+- Ensure Node.js 18+ is installed
+- Check that all dependencies are installed: `npm install`
+- Verify port 3000 is not in use
+
+**File upload fails:**
+- Check file format (CSV or Excel only)
+- Verify required columns (Date, Portfolio Value)
+- Ensure file is not corrupted
+- Check file size (recommended < 10MB)
+
+**Analysis doesn't complete:**
+- Verify backend is running
+- Check browser console for errors
+- Ensure sufficient data points (minimum 30 records recommended)
+
+---
+
+# Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## Development Guidelines
+
+- Follow existing code style and conventions
+- Add comments for complex logic
+- Test changes thoroughly before submitting
+- Update documentation as needed
 
 ---
 

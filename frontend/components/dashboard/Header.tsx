@@ -172,8 +172,8 @@ export default function Header() {
           flex
           items-center
           justify-between
-          px-8
-          py-6
+          px-6
+          py-4
         "
       >
 
@@ -196,8 +196,8 @@ export default function Header() {
           <div
             className="
               flex
-              h-12
-              w-12
+              h-10
+              w-10
               items-center
               justify-center
               rounded-xl
@@ -207,7 +207,7 @@ export default function Header() {
           >
 
             <BarChart3
-              className="h-6 w-6"
+              className="h-5 w-5"
             />
 
           </div>
@@ -277,10 +277,33 @@ export default function Header() {
         <div
           className="
             flex
-            items-center
+            flex-col
+            items-end
             gap-3
           "
         >
+
+          <div
+            className="
+              text-xs
+              text-muted-foreground
+              text-right
+              mb-1
+            "
+          >
+            <div className="font-medium">Accepted Formats:</div>
+            <div>CSV (.csv), Excel (.xlsx, .xls)</div>
+            <div className="mt-1 font-medium">Required Columns:</div>
+            <div>Date, Portfolio Value (required), Benchmark Value (optional)</div>
+          </div>
+
+          <div
+            className="
+              flex
+              items-center
+              gap-3
+            "
+          >
 
 
 
@@ -327,6 +350,8 @@ export default function Header() {
 
             onClick={handlePortfolioClick}
 
+            title="Accepts CSV (.csv) and Excel (.xlsx, .xls) files with columns: Date, Portfolio Value (required), Benchmark Value (optional)"
+
           >
 
             <Upload
@@ -355,6 +380,8 @@ export default function Header() {
             size="lg"
 
             onClick={handleFactorClick}
+
+            title="Accepts CSV (.csv) and Excel (.xlsx, .xls) files with factor data"
 
           >
 
@@ -403,6 +430,8 @@ export default function Header() {
 
 
 
+
+          </div>
 
         </div>
 

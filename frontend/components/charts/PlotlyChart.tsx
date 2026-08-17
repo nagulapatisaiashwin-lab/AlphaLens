@@ -35,7 +35,7 @@ export default function PlotlyChart({
 
   figure,
 
-  height = 450,
+  height = 350,
 
 }: PlotlyChartProps) {
 
@@ -77,13 +77,13 @@ export default function PlotlyChart({
 
           margin: {
 
-            l: 60,
+            l: 50,
 
-            r: 30,
+            r: 20,
 
-            t: 25,
+            t: 20,
 
-            b: 55,
+            b: 45,
 
           },
 

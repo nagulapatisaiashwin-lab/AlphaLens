@@ -70,16 +70,6 @@ function getMetricColor(
 
 
 
-  // Debug
-  console.log(
-    "METRIC COLOR",
-    title,
-    rawValue,
-    value
-  );
-
-
-
 
 
   /*
@@ -340,14 +330,14 @@ export default function MetricCard({
         rounded-xl
         border
         bg-card
-        p-8
+        p-5
       "
     >
 
 
       <p
         className="
-          text-sm
+          text-xs
           uppercase
           tracking-wide
           text-muted-foreground
@@ -363,8 +353,8 @@ export default function MetricCard({
 
       <h2
         className={`
-          mt-6
-          text-4xl
+          mt-3
+          text-2xl
           font-bold
           ${getMetricColor(
             title,

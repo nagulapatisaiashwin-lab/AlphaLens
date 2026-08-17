@@ -59,17 +59,17 @@ export default function PortfolioSnapshot() {
       title="Portfolio Snapshot"
       subtitle="Overview of the uploaded portfolio and analysis configuration."
     >
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((item) => (
           <div
             key={item.label}
-            className="rounded-xl border border-border/60 bg-muted/30 p-5 transition-all duration-300 hover:-translate-y-1 hover:bg-muted/50"
+            className="rounded-xl border border-border/60 bg-muted/30 p-4 transition-all duration-300 hover:-translate-y-1 hover:bg-muted/50"
           >
             <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               {item.label}
             </p>
 
-            <p className="mt-2 text-lg font-semibold tracking-tight">
+            <p className="mt-2 text-sm font-semibold tracking-tight">
               {item.value}
             </p>
           </div>
